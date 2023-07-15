@@ -1,14 +1,16 @@
 import puppeteer from "puppeteer";
 import path from "path";
+import performKriterler from "./performKriterler.js";
+import getInventoryTotal from "./getInventoryTotal.js";
+
+function wait(milliseconds) {
+  return new Promise((resolve) => {
+    setTimeout(resolve, milliseconds);
+  });
+}
 
 async function runAutomation() {
   const pathToExtension = path.join(process.cwd(), "SellerFlash");
-
-  function wait(milliseconds) {
-    return new Promise((resolve) => {
-      setTimeout(resolve, milliseconds);
-    });
-  }
 
   const browser = await puppeteer.launch({
     headless: false,
@@ -41,43 +43,6 @@ async function runAutomation() {
   // Amazon linklerini içeren dizi
   // Şablon ="'"&A1:A106&"',"
   const amazonLinks = [
-    "https://www.amazon.com/s?i=garden&bbn=367165011&rh=n%3A1055398%2Cn%3A284507%2Cn%3A6054382011%2Cn%3A18098905011%2Cn%3A367165011%2Cn%3A367220011%2Cp_72%3A1248915011%2Cp_36%3A1500-7700&dc&ds=v1%3A%2B8qZEGJMmOyUTacOT5DBzNOgTeXgfI%2BVRA8NvdxFfv0&qid=1688253906&rnid=367165011&ref=sr_nr_n_8",
-    "https://www.amazon.com/s?i=garden&bbn=367165011&rh=n%3A1055398%2Cn%3A284507%2Cn%3A6054382011%2Cn%3A18098905011%2Cn%3A367165011%2Cn%3A16188243011%2Cp_72%3A1248915011%2Cp_36%3A1500-7700&dc&ds=v1%3Aq0yxLhzkjEO436SCbalwS00caLanqzCFCM8E52VM7ag&qid=1688253906&rnid=367165011&ref=sr_nr_n_1",
-    "https://www.amazon.com/s?i=garden&bbn=367165011&rh=n%3A1055398%2Cn%3A284507%2Cn%3A6054382011%2Cn%3A18098905011%2Cn%3A367165011%2Cn%3A18066712011%2Cp_72%3A1248915011%2Cp_36%3A1500-7700&dc&ds=v1%3ALFwCCacwxfBgtPqCmBOPohAtjX%2Fw9jUkTFpb6Er%2FDMo&qid=1688253906&rnid=367165011&ref=sr_nr_n_2",
-    "https://www.amazon.com/s?i=garden&bbn=367165011&rh=n%3A1055398%2Cn%3A284507%2Cn%3A6054382011%2Cn%3A18098905011%2Cn%3A367165011%2Cn%3A367170011%2Cp_72%3A1248915011%2Cp_36%3A1500-7700&dc&ds=v1%3AK4sRXXszsv68HQJSnV7Cg5b7fIIEhreC4XFIzH86pu8&qid=1688253906&rnid=367165011&ref=sr_nr_n_3",
-    "https://www.amazon.com/s?i=garden&bbn=367125011&rh=n%3A1055398%2Cn%3A284507%2Cn%3A6054382011%2Cn%3A18098905011%2Cn%3A367165011%2Cn%3A17913622011%2Cn%3A367125011%2Cn%3A367144011%2Cp_72%3A1248915011%2Cp_36%3A1500-7700&dc&ds=v1%3A303dix%2B%2FkXFZ8ewhInVH4N5z1CPyiGouz%2FNWWXNCNsQ&qid=1688256559&rnid=367125011&ref=sr_nr_n_7",
-    "https://www.amazon.com/s?i=garden&bbn=367165011&rh=n%3A1055398%2Cn%3A284507%2Cn%3A6054382011%2Cn%3A18098905011%2Cn%3A367165011%2Cn%3A19212769011%2Cp_72%3A1248915011%2Cp_36%3A1500-7700&dc&ds=v1%3AX8491VnjCARcwdwaYlc5g%2FENKxi4TuuQguaTAdkj7eo&qid=1688253906&rnid=367165011&ref=sr_nr_n_5",
-    "https://www.amazon.com/s?i=garden&bbn=17913622011&rh=n%3A1055398%2Cn%3A284507%2Cn%3A6054382011%2Cn%3A18098905011%2Cn%3A367165011%2Cn%3A17913622011%2Cn%3A367107011%2Cp_72%3A1248915011%2Cp_36%3A1500-7700&dc&ds=v1%3AmRGdOZksqFXg%2B7oL2N1JrvEGk%2FB%2BxvNwIS6PwB%2B31ms&qid=1688256546&rnid=17913622011&ref=sr_nr_n_1",
-    "https://www.amazon.com/s?i=garden&bbn=17913622011&rh=n%3A1055398%2Cn%3A284507%2Cn%3A6054382011%2Cn%3A18098905011%2Cn%3A367165011%2Cn%3A17913622011%2Cn%3A367146011%2Cp_72%3A1248915011%2Cp_36%3A1500-7700&dc&ds=v1%3AwoPtiXFk30wMiXuRGbVgmzDNcNUwLGDJz50LCS%2BZ%2F%2Bg&qid=1688256546&rnid=17913622011&ref=sr_nr_n_2",
-    "https://www.amazon.com/s?i=garden&bbn=17913622011&rh=n%3A1055398%2Cn%3A284507%2Cn%3A6054382011%2Cn%3A18098905011%2Cn%3A367165011%2Cn%3A17913622011%2Cn%3A367147011%2Cp_72%3A1248915011%2Cp_36%3A1500-7700&dc&ds=v1%3AiylFW1iyk27NvbDLeDUsS23z398x6ZlVbeTUZJN64fM&qid=1688256546&rnid=17913622011&ref=sr_nr_n_3",
-    "https://www.amazon.com/s?i=garden&bbn=367125011&rh=n%3A1055398%2Cn%3A284507%2Cn%3A6054382011%2Cn%3A18098905011%2Cn%3A367165011%2Cn%3A17913622011%2Cn%3A367125011%2Cn%3A367142011%2Cp_72%3A1248915011%2Cp_36%3A1500-7700&dc&ds=v1%3AHTIAKE%2F2GJEooiJXJEXxAk87dHVCOVaxEk3s4Zl%2FHjw&qid=1688256559&rnid=367125011&ref=sr_nr_n_1",
-    "https://www.amazon.com/s?i=garden&bbn=367125011&rh=n%3A1055398%2Cn%3A284507%2Cn%3A6054382011%2Cn%3A18098905011%2Cn%3A367165011%2Cn%3A17913622011%2Cn%3A367125011%2Cn%3A3135653011%2Cp_72%3A1248915011%2Cp_36%3A1500-7700&dc&ds=v1%3AF%2FrjZZv4ExQWgXN3SHvAYfbN1em%2BCoxjrQVVi2hGq1w&qid=1688256559&rnid=367125011&ref=sr_nr_n_2",
-    "https://www.amazon.com/s?i=garden&bbn=367125011&rh=n%3A1055398%2Cn%3A284507%2Cn%3A6054382011%2Cn%3A18098905011%2Cn%3A367165011%2Cn%3A17913622011%2Cn%3A367125011%2Cn%3A367139011%2Cp_72%3A1248915011%2Cp_36%3A1500-7700&dc&ds=v1%3AaSxPd2Ju4VuhWZEf7ZRpPMjE%2BDVBHf8OE8t3upy5e3U&qid=1688256559&rnid=367125011&ref=sr_nr_n_3",
-    "https://www.amazon.com/s?i=garden&bbn=367125011&rh=n%3A1055398%2Cn%3A284507%2Cn%3A6054382011%2Cn%3A18098905011%2Cn%3A367165011%2Cn%3A17913622011%2Cn%3A367125011%2Cn%3A23501661011%2Cp_72%3A1248915011%2Cp_36%3A1500-7700&dc&ds=v1%3AhOcqRQfqVflL8VFcND1WB5JOw5flxRlxlnVDHtpqESE&qid=1688256559&rnid=367125011&ref=sr_nr_n_4",
-    "https://www.amazon.com/s?i=garden&bbn=367125011&rh=n%3A1055398%2Cn%3A284507%2Cn%3A6054382011%2Cn%3A18098905011%2Cn%3A367165011%2Cn%3A17913622011%2Cn%3A367125011%2Cn%3A9298951011%2Cp_72%3A1248915011%2Cp_36%3A1500-7700&dc&ds=v1%3AsbIpX%2FrnVJdaJXhX157Iizw3MQ4b2QiXg5xHIOXk5OU&qid=1688256559&rnid=367125011&ref=sr_nr_n_5",
-    "https://www.amazon.com/s?i=garden&bbn=367125011&rh=n%3A1055398%2Cn%3A284507%2Cn%3A6054382011%2Cn%3A18098905011%2Cn%3A367165011%2Cn%3A17913622011%2Cn%3A367125011%2Cn%3A3135662011%2Cp_72%3A1248915011%2Cp_36%3A1500-7700&dc&ds=v1%3AUnPqJGMPE99eTkgtRUEYOHzF2uBcB6C4lkcdMvmjCXw&qid=1688256559&rnid=367125011&ref=sr_nr_n_6",
-    "https://www.amazon.com/s?i=garden&bbn=23593202011&rh=n%3A1055398%2Cn%3A284507%2Cn%3A6054382011%2Cn%3A18098905011%2Cn%3A367165011%2Cn%3A23593202011%2Cn%3A13840621%2Cp_72%3A1248915011%2Cp_36%3A1500-7700&dc&ds=v1%3AHZIYjvVH5gd3GcAD8%2FVhPINvdhodGM1MXe4wp%2BVC8bU&qid=1688256313&rnid=23593202011&ref=sr_nr_n_22",
-    "https://www.amazon.com/s?i=garden&bbn=23593202011&rh=n%3A1055398%2Cn%3A284507%2Cn%3A6054382011%2Cn%3A18098905011%2Cn%3A367165011%2Cn%3A23593202011%2Cn%3A9298959011%2Cp_72%3A1248915011%2Cp_36%3A1500-7700&dc&ds=v1%3AN%2BU%2B%2Fw%2FGNsbPS86PaJ3Q6sNJJ7xnE0y2757xgC0NWVY&qid=1688256313&rnid=23593202011&ref=sr_nr_n_1",
-    "https://www.amazon.com/s?i=garden&bbn=23593202011&rh=n%3A1055398%2Cn%3A284507%2Cn%3A6054382011%2Cn%3A18098905011%2Cn%3A367165011%2Cn%3A23593202011%2Cn%3A367166011%2Cp_72%3A1248915011%2Cp_36%3A1500-7700&dc&ds=v1%3AOKtcdMbfBBSchrEiHYuuKwfs7%2BOtC5Vai7%2FZQ2xbLsI&qid=1688256313&rnid=23593202011&ref=sr_nr_n_2",
-    "https://www.amazon.com/s?i=garden&bbn=23593202011&rh=n%3A1055398%2Cn%3A284507%2Cn%3A6054382011%2Cn%3A18098905011%2Cn%3A367165011%2Cn%3A23593202011%2Cn%3A5264731011%2Cp_72%3A1248915011%2Cp_36%3A1500-7700&dc&ds=v1%3Ad8eG6A5DbnfrJZY8b6iKpJybc4vCXBD9KmgReLdu%2B7U&qid=1688256313&rnid=23593202011&ref=sr_nr_n_3",
-    "https://www.amazon.com/s?i=garden&bbn=23593202011&rh=n%3A1055398%2Cn%3A284507%2Cn%3A6054382011%2Cn%3A18098905011%2Cn%3A367165011%2Cn%3A23593202011%2Cn%3A367204011%2Cp_72%3A1248915011%2Cp_36%3A1500-7700&dc&ds=v1%3Ahoi6BSCVD%2FcH8YdGfnAcSFwalnYTEbzuUN%2F%2Fy6Q2XxQ&qid=1688256313&rnid=23593202011&ref=sr_nr_n_4",
-    "https://www.amazon.com/s?i=garden&bbn=23593202011&rh=n%3A1055398%2Cn%3A284507%2Cn%3A6054382011%2Cn%3A18098905011%2Cn%3A367165011%2Cn%3A23593202011%2Cn%3A3737281%2Cp_72%3A1248915011%2Cp_36%3A1500-7700&dc&ds=v1%3AUTUxAmeR450eOvFZFYnJgbTLH7rYRDG2LB%2BpQFAHs1M&qid=1688256313&rnid=23593202011&ref=sr_nr_n_5",
-    "https://www.amazon.com/s?i=garden&bbn=23593202011&rh=n%3A1055398%2Cn%3A284507%2Cn%3A6054382011%2Cn%3A18098905011%2Cn%3A367165011%2Cn%3A23593202011%2Cn%3A5314712011%2Cp_72%3A1248915011%2Cp_36%3A1500-7700&dc&ds=v1%3AZOSs4%2B9OjMPr30YMqjs6X4JKndi%2FgoxvLpK6zJn8Kgk&qid=1688256313&rnid=23593202011&ref=sr_nr_n_6",
-    "https://www.amazon.com/s?i=garden&bbn=23593202011&rh=n%3A1055398%2Cn%3A284507%2Cn%3A6054382011%2Cn%3A18098905011%2Cn%3A367165011%2Cn%3A23593202011%2Cn%3A10049079011%2Cp_72%3A1248915011%2Cp_36%3A1500-7700&dc&ds=v1%3AbWU7T4zzlgS5jHI9hCk1C7Hr42nXVGZRs4l77WT9Ep8&qid=1688256313&rnid=23593202011&ref=sr_nr_n_7",
-    "https://www.amazon.com/s?i=garden&bbn=23593202011&rh=n%3A1055398%2Cn%3A284507%2Cn%3A6054382011%2Cn%3A18098905011%2Cn%3A367165011%2Cn%3A23593202011%2Cn%3A367176011%2Cp_72%3A1248915011%2Cp_36%3A1500-7700&dc&ds=v1%3AOuDgVDjQVPIH5oIROHKLRTyGFvLJG4c5RDZj2uNQ02g&qid=1688256313&rnid=23593202011&ref=sr_nr_n_8",
-    "https://www.amazon.com/s?i=garden&bbn=23593202011&rh=n%3A1055398%2Cn%3A284507%2Cn%3A6054382011%2Cn%3A18098905011%2Cn%3A367165011%2Cn%3A23593202011%2Cn%3A367177011%2Cp_72%3A1248915011%2Cp_36%3A1500-7700&dc&ds=v1%3ADF9dUIKgfEl0fzuha%2B2vBtD0539s4dQY3GewVQaWKy8&qid=1688256313&rnid=23593202011&ref=sr_nr_n_9",
-    "https://www.amazon.com/s?i=garden&bbn=23593202011&rh=n%3A1055398%2Cn%3A284507%2Cn%3A6054382011%2Cn%3A18098905011%2Cn%3A367165011%2Cn%3A23593202011%2Cn%3A3737141%2Cp_72%3A1248915011%2Cp_36%3A1500-7700&dc&ds=v1%3AxdvXITgBFGLoX9EtJwJ2idx2u1px0dBZLfVjf8va%2BFk&qid=1688256313&rnid=23593202011&ref=sr_nr_n_10",
-    "https://www.amazon.com/s?i=garden&bbn=23593202011&rh=n%3A1055398%2Cn%3A284507%2Cn%3A6054382011%2Cn%3A18098905011%2Cn%3A367165011%2Cn%3A23593202011%2Cn%3A3744181%2Cp_72%3A1248915011%2Cp_36%3A1500-7700&dc&ds=v1%3AXklPLsmaMXxMcLuA3M%2Fr8o9IjIKo7ebv2GJ4iZrN4XY&qid=1688256313&rnid=23593202011&ref=sr_nr_n_11",
-    "https://www.amazon.com/s?i=garden&bbn=23593202011&rh=n%3A1055398%2Cn%3A284507%2Cn%3A6054382011%2Cn%3A18098905011%2Cn%3A367165011%2Cn%3A23593202011%2Cn%3A643810011%2Cp_72%3A1248915011%2Cp_36%3A1500-7700&dc&ds=v1%3AKx2605EEymE6yVt47t7byO0%2FY0GVbl%2FKfTqxnwarvDw&qid=1688256313&rnid=23593202011&ref=sr_nr_n_12",
-    "https://www.amazon.com/s?i=garden&bbn=23593202011&rh=n%3A1055398%2Cn%3A284507%2Cn%3A6054382011%2Cn%3A18098905011%2Cn%3A367165011%2Cn%3A23593202011%2Cn%3A24218397011%2Cp_72%3A1248915011%2Cp_36%3A1500-7700&dc&ds=v1%3Aaez05aWRUv%2BPd0TuPrRey5%2BG5ltBqBYa1kU0aUylKg8&qid=1688256313&rnid=23593202011&ref=sr_nr_n_13",
-    "https://www.amazon.com/s?i=garden&bbn=23593202011&rh=n%3A1055398%2Cn%3A284507%2Cn%3A6054382011%2Cn%3A18098905011%2Cn%3A367165011%2Cn%3A23593202011%2Cn%3A367187011%2Cp_72%3A1248915011%2Cp_36%3A1500-7700&dc&ds=v1%3A7h8yttkYPahUJ1Z%2Bbqf0lMuvNPwcgvLbIvd7eV4ERK8&qid=1688256313&rnid=23593202011&ref=sr_nr_n_14",
-    "https://www.amazon.com/s?i=garden&bbn=23593202011&rh=n%3A1055398%2Cn%3A284507%2Cn%3A6054382011%2Cn%3A18098905011%2Cn%3A367165011%2Cn%3A23593202011%2Cn%3A24218398011%2Cp_72%3A1248915011%2Cp_36%3A1500-7700&dc&ds=v1%3ArBqSNJn9lp8drg5L9bTiwKF8MZ7X9qYsEXNFU7QHUY0&qid=1688256313&rnid=23593202011&ref=sr_nr_n_15",
-    "https://www.amazon.com/s?i=garden&bbn=367201011&rh=n%3A1055398%2Cn%3A284507%2Cn%3A6054382011%2Cn%3A18098905011%2Cn%3A367165011%2Cn%3A23593202011%2Cn%3A367201011%2Cn%3A367219011%2Cp_72%3A1248915011%2Cp_36%3A1500-7700&dc&ds=v1%3AnJWvA1BzsW1GNETbyyKU1OIV%2BY15i%2B%2FGo3kq3IDz5uE&qid=1688256329&rnid=367201011&ref=sr_nr_n_6",
-    "https://www.amazon.com/s?i=garden&bbn=367201011&rh=n%3A1055398%2Cn%3A284507%2Cn%3A6054382011%2Cn%3A18098905011%2Cn%3A367165011%2Cn%3A23593202011%2Cn%3A367201011%2Cn%3A681147011%2Cp_72%3A1248915011%2Cp_36%3A1500-7700&dc&ds=v1%3Ah4hNriQ1CQhlrNkToOk2jv8X5hhZ3kP5ePWwcTltNS4&qid=1688256329&rnid=367201011&ref=sr_nr_n_1",
-    "https://www.amazon.com/s?i=garden&bbn=367201011&rh=n%3A1055398%2Cn%3A284507%2Cn%3A6054382011%2Cn%3A18098905011%2Cn%3A367165011%2Cn%3A23593202011%2Cn%3A367201011%2Cn%3A367210011%2Cp_72%3A1248915011%2Cp_36%3A1500-7700&dc&ds=v1%3AhPeH%2Fmo1aMoF4sxUx425XSD7YU9mJdDOgTZMnFV2rfE&qid=1688256329&rnid=367201011&ref=sr_nr_n_2",
-    "https://www.amazon.com/s?i=garden&bbn=367201011&rh=n%3A1055398%2Cn%3A284507%2Cn%3A6054382011%2Cn%3A18098905011%2Cn%3A367165011%2Cn%3A23593202011%2Cn%3A367201011%2Cn%3A678544011%2Cp_72%3A1248915011%2Cp_36%3A1500-7700&dc&ds=v1%3AmJOR9R9zL0rTLN0QfUSYiXGhVp2gu%2B8J5BEG%2FpyfegQ&qid=1688256329&rnid=367201011&ref=sr_nr_n_3",
-    "https://www.amazon.com/s?i=garden&bbn=367201011&rh=n%3A1055398%2Cn%3A284507%2Cn%3A6054382011%2Cn%3A18098905011%2Cn%3A367165011%2Cn%3A23593202011%2Cn%3A367201011%2Cn%3A24218399011%2Cp_72%3A1248915011%2Cp_36%3A1500-7700&dc&ds=v1%3AMbG0AOqshZ2H32kIAlW3qikgi%2BybGNDi%2BqM4OiYSiXk&qid=1688256329&rnid=367201011&ref=sr_nr_n_4",
-    "https://www.amazon.com/s?i=garden&bbn=367201011&rh=n%3A1055398%2Cn%3A284507%2Cn%3A6054382011%2Cn%3A18098905011%2Cn%3A367165011%2Cn%3A23593202011%2Cn%3A367201011%2Cn%3A678547011%2Cp_72%3A1248915011%2Cp_36%3A1500-7700&dc&ds=v1%3A8AhyI1j2wilZQqjeBnUYLkhPtwmmPATsOYGQcZ39ACY&qid=1688256329&rnid=367201011&ref=sr_nr_n_5",
     "https://www.amazon.com/s?i=garden&bbn=23593202011&rh=n%3A1055398%2Cn%3A284507%2Cn%3A6054382011%2Cn%3A18098905011%2Cn%3A367165011%2Cn%3A23593202011%2Cn%3A367304011%2Cp_72%3A1248915011%2Cp_36%3A1500-7700&dc&ds=v1%3ASi%2FNDIlSMyD8EV%2FcujA268BYa9p%2BjX2Px1q%2BZjErzy4&qid=1688256313&rnid=23593202011&ref=sr_nr_n_17",
     "https://www.amazon.com/s?i=garden&bbn=23593202011&rh=n%3A1055398%2Cn%3A284507%2Cn%3A6054382011%2Cn%3A18098905011%2Cn%3A367165011%2Cn%3A23593202011%2Cn%3A367305011%2Cp_72%3A1248915011%2Cp_36%3A1500-7700&dc&ds=v1%3Af1DD1P0BSeXHdwr%2FYlj4dIb2No7xRn6OTLqtu9L3%2FSk&qid=1688256313&rnid=23593202011&ref=sr_nr_n_18",
     "https://www.amazon.com/s?i=garden&bbn=23593202011&rh=n%3A1055398%2Cn%3A284507%2Cn%3A6054382011%2Cn%3A18098905011%2Cn%3A367165011%2Cn%3A23593202011%2Cn%3A18581172011%2Cp_72%3A1248915011%2Cp_36%3A1500-7700&dc&ds=v1%3A0myRcP6Whw7KV%2Blp3FguJDbb%2Fqx4SBxYsJ4x2UxSo0c&qid=1688256313&rnid=23593202011&ref=sr_nr_n_19",
@@ -175,8 +140,8 @@ async function runAutomation() {
 
     await page1.waitForSelector("#sfStartSearch");
     const startButton = await page1.$("#sfStartSearch");
-
-    if (pagesCanBeScanForFreeSpace >= totalPages) {
+    //pagesCanBeScanForFreeSpace >= totalPages
+    if (inventory < 40000) {
       await page1.waitForSelector("#sfPageCountMin");
       await page1.waitForSelector("#sfPageCountMax");
       const sfPageCountMin = await page1.$("#sfPageCountMin");
@@ -219,19 +184,22 @@ async function runAutomation() {
       //
       //
     } else {
-      if (inventory >= 49000) {
+      if (inventory >= 40000) {
         console.log(
           "Total inventory is equal to or greater than 49000. waiting 15mins automation."
         );
-        await wait(900000);
+        await wait(100);
         await page2.reload({ waitUntil: "networkidle0" });
-        await wait(2000);
+
+        await performKriterler(page2);
+
+        await wait(3000);
       }
 
       let donguSayisi = Math.ceil(totalPages / pagesCanBeScanForFreeSpace);
 
       for (let index = 0; index <= donguSayisi; index++) {
-        if (inventory >= 49000) {
+        if (inventory >= 40000) {
           console.log(
             "Total inventory is equal to or greater than 49000. Stopping automation."
           );
@@ -320,66 +288,3 @@ async function runAutomation() {
 }
 
 runAutomation();
-
-//
-//
-// Sellerflash'daki ürün sayısını bulduğumuz fonksiyon.
-async function getInventoryTotal(page2) {
-  try {
-    await page2.waitForSelector(
-      "#app > div > div > div > div.layout-content > div > div.layout-content-container > div > div > ul > li:nth-child(1) > a > span:nth-child(1)"
-    );
-    let magazayaAktarilan = await page2.$eval(
-      "#app > div > div > div > div.layout-content > div > div.layout-content-container > div > div > ul > li:nth-child(1) > a > span:nth-child(1)",
-      (element) => {
-        const text = element.textContent;
-        const numericValue = text.match(/\d+/);
-        return numericValue ? parseInt(numericValue[0]) : null;
-      }
-    );
-
-    await page2.waitForSelector(
-      "#app > div > div > div > div.layout-content > div > div.layout-content-container > div > div > ul > li:nth-child(2) > a > span:nth-child(1)"
-    );
-    let kuyrukta = await page2.$eval(
-      "#app > div > div > div > div.layout-content > div > div.layout-content-container > div > div > ul > li:nth-child(2) > a > span:nth-child(1)",
-      (element) => {
-        const text = element.textContent;
-        const numericValue = text.match(/\d+/);
-        return numericValue ? parseInt(numericValue[0]) : null;
-      }
-    );
-
-    await page2.waitForSelector(
-      "#app > div > div > div > div.layout-content > div > div.layout-content-container > div > div > ul > li:nth-child(3) > a > span:nth-child(1)"
-    );
-    let onayBekleyen = await page2.$eval(
-      "#app > div > div > div > div.layout-content > div > div.layout-content-container > div > div > ul > li:nth-child(3) > a > span:nth-child(1)",
-      (element) => {
-        const text = element.textContent;
-        const numericValue = text.match(/\d+/);
-        return numericValue ? parseInt(numericValue[0]) : null;
-      }
-    );
-
-    await page2.waitForSelector(
-      "#app > div > div > div > div.layout-content > div > div.layout-content-container > div > div > ul > li:nth-child(4) > a > span:nth-child(1)"
-    );
-    let kriterDisi = await page2.$eval(
-      "#app > div > div > div > div.layout-content > div > div.layout-content-container > div > div > ul > li:nth-child(4) > a > span:nth-child(1)",
-      (element) => {
-        const text = element.textContent;
-        const numericValue = text.match(/\d+/);
-        return numericValue ? parseInt(numericValue[0]) : null;
-      }
-    );
-
-    let totalInventory =
-      magazayaAktarilan + kuyrukta + onayBekleyen + kriterDisi;
-    console.log("totalInventory ayrı fonksiyondaki :>> ", totalInventory);
-    return totalInventory;
-  } catch (error) {
-    console.log("Seçici bulunamadı: ", error);
-    return null;
-  }
-}
