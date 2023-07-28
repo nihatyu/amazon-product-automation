@@ -51,7 +51,7 @@ async function getInventoryTotal(page2) {
 
     let totalInventory =
       magazayaAktarilan + kuyrukta + onayBekleyen + kriterDisi;
-    console.log("totalInventory ayrı fonksiyondaki :>> ", totalInventory);
+
     return totalInventory;
   } catch (error) {
     console.log("Seçici bulunamadı: ", error);
